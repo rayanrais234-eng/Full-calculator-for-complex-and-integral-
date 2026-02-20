@@ -1,0 +1,387 @@
+#include <iostream>
+#include <sstream>
+#include <string>
+#include <stdexcept>
+#include <cmath>
+#include <algorithm>
+#include "Complex Calculator/complex.h"
+#include "Integral Calculator/integral.h"
+
+constexpr double PI = 3.14159265358979323846;
+constexpr double E = 2.71828182845904523536;
+using namespace std;
+
+double findPi(string s) {
+    s.erase(remove_if(s.begin(), s.end(), ::isspace), s.end());
+    if (s.find("pi") == string::npos) 
+        return stod(s);
+      
+    size_t slash = s.find("/");
+    if (slash != string::npos) {
+        double denominator = findPi(s.substr(slash + 1));
+        double numerator = findPi(s.substr(0, slash));
+        return numerator / denominator;
+    }
+    
+    size_t mul = s.find("pi");
+    double coeff = 1.0;
+    if (mul != string::npos) {
+        coeff = stod(s.substr(0, mul));
+        return coeff * PI;
+    }
+}
+
+int main() {
+    int choice;
+    do {
+    cout << "======== Welcome to the Calculator! ========" << endl;
+    cout << "Please select an option:" << endl;
+    cout << "1. Complex Number Operations in Cartesian Form" << endl;
+    cout << "2. Complex Number Operations in Polar Form" << endl;
+    cout << "3. Integral Calculations" << endl;
+    cout << "4. Exit" << endl;
+    cin >> choice;
+
+    switch (choice) {
+        case 1: {
+            Complex c1;
+            Complex c2;
+            cout << "Please enter a complex number in the form a + ib: ";
+            string complexInput;
+            cin.ignore();
+            getline(cin, complexInput);
+            {
+                istringstream iss(complexInput);
+                double real, imag;
+                char sign, i;
+                if (iss >> real >> sign >> imag >> i && (sign == '+' || sign == '-') && i == 'i') {
+                    if (sign == '-') imag = -imag;
+                     c1 = Complex(real, imag);
+                    cout << "You entered: " << endl;
+                    c1.display();
+                } else {
+                    cout << "Invalid complex number format." << endl;
+                }
+            }
+            cout << "Please enter a second complex number in the form a + ib: ";
+            string complexInput2;
+            getline(cin, complexInput2);
+            {
+                istringstream iss(complexInput2);
+                double real, imag;
+                char sign, i;
+                if (iss >> real >> sign >> imag >> i && (sign == '+' || sign == '-') && i == 'i') {
+                    if (sign == '-') imag = -imag;
+                    c2 = Complex(real, imag);
+                    cout << "You entered: " << endl;
+                    c2.display();
+                } else {
+                    cout << "Invalid complex number format." << endl;
+                }
+            }
+            cout << "Please choose an operation:" << endl;
+            cout << "1. Addition" << endl;
+            cout << "2. Subtraction" << endl;
+            cout << "3. Multiplication" << endl;
+            cout << "4. Division" << endl;
+            cout << "5. Power" << endl;
+            cout << "6. Exponential" << endl;
+            cout << "7. Display in Polar Form" << endl;
+            int operation;
+            cin >> operation;
+            switch (operation) {
+                case 1: {
+                    Complex c3 = c1 + c2;
+                    cout << "Result: " << endl;
+                    c3.display();
+                    break;
+                }
+                case 2: {
+                    Complex c4 = c1 - c2;
+                    cout << "Result: " << endl;
+                    c4.display();
+                    break;
+                }
+                case 3: {
+                    Complex c5 = c1 * c2;
+                    cout << "Result: " << endl;
+                    c5.display();
+                    break;
+                }
+                case 4: {
+                    Complex c6 = c1 / c2;
+                    cout << "Result: " << endl;
+                    c6.display();
+                    break;
+                }
+                case 5: {
+                    cout << "choose a power: ";
+                    int power;
+                    cin >> power;
+                    Complex c7 = c1 ^ power;
+                    Complex c8 = c2 ^ power;
+                    cout << "Result for the first complex number: " << endl << "\n";
+                    c7.display();
+                    cout << "Result for the second complex number: " << endl << "\n";
+                    c8.display();
+                    break;
+                }
+                case 6: {
+                    cout << "choose a base: ";
+                    double base;
+                    cin >> base;
+                    Complex c9 = c1.pow(base);
+                    Complex c10 = c2.pow(base);
+                    cout << "Result: " << endl;
+                    c9.display();
+                    cout << ", " << endl;
+                    c10.display();
+                    break;
+                }
+                case 7: {
+                    cout << "Polar form of the first complex number: " << endl;
+                    c1.displayPolarForm();
+                    cout << "Polar form of the second complex number: " << endl;
+                    c2.displayPolarForm();
+                    break;
+                }
+                default:
+                    cout << "Invalid operation. Please try again." << endl;
+                    break;
+            }
+            break;
+        } case 2: {
+            Complex c1,c2;
+            cout << "Please enter a complex number in polar form r,θ: ";
+            double r;
+            string theta;
+            char comma;
+            cin >> r >> comma >> theta;
+            if (comma == ',') {
+                double thetaValue = findPi(theta);
+                c1 = Complex::fromPolar(r, thetaValue);
+                cout << "You entered: ";
+                c1.displayPolarForm();
+            } else {
+                cout << "Invalid polar form format." << endl;
+            }
+            cout << "Please enter a second complex number in polar form r,θ: ";
+            cin >> r >> comma >> theta;
+            if (comma == ',') {
+                double thetaValue = findPi(theta);
+                c2 = Complex::fromPolar(r, thetaValue);
+                cout << "You entered: ";
+                c2.displayPolarForm();
+            } else {
+                cout << "Invalid polar form format." << endl;
+            }
+            cout << "Please choose an operation:" << endl;
+            cout << "1. Addition" << endl;
+            cout << "2. Subtraction" << endl;
+            cout << "3. Multiplication" << endl;
+            cout << "4. Division" << endl;
+            cout << "5. Power" << endl;
+            cout << "6. Exponential" << endl;
+            cout << "7. Cartesian form" << endl;
+            int operation;
+            cin >> operation;
+            switch (operation) {
+                case 1: {
+                    Complex c3 = c1 + c2;
+                    cout << "Result: " << endl;
+                    c3.displayPolarForm();
+                    break;
+                }
+                case 2: {
+                    Complex c4 = c1 - c2;
+                    cout << "Result: " << endl;
+                    c4.displayPolarForm();
+                    break;
+                }
+                case 3: {
+                    Complex c5 = c1 * c2;
+                    cout << "Result: " << endl;
+                    c5.displayPolarForm();
+                    break;
+                }
+                case 4: {
+                    Complex c6 = c1 / c2;
+                    cout << "Result: " << endl;
+                    c6.displayPolarForm();
+                    break;
+                }
+                case 5: {
+                    cout << "choose a power: ";
+                    int power;
+                    cin >> power;
+                    Complex c7 = c1 ^ power;
+                    Complex c8 = c2 ^ power;
+                    cout << "Result for the first complex number: " << endl << "\n";
+                    c7.displayPolarForm();
+                    cout << "Result for the second complex number: " << endl << "\n";
+                    c8.displayPolarForm();
+                    break;
+                }
+                case 6: {
+                    cout << "choose a base: ";
+                    double base;
+                    cin >> base;
+                    Complex c9 = c1.pow(base);
+                    Complex c10 = c2.pow(base);
+                    cout << "Result for the first complex number: " << endl << "\n";
+                    c9.displayPolarForm();
+                    cout << "Result for the second complex number: " << endl << "\n";
+                    c10.displayPolarForm();
+                    break;
+                }
+                case 7: {
+                    cout << "Cartesian form of the first complex number: " << endl;
+                    c1.fromPolar();
+                    c1.display();
+                    cout << "Cartesian form of the second complex number: " << endl;
+                    c2.fromPolar();
+                    c2.display();
+                    break;
+                }
+                default:
+                    cout << "Invalid operation. Please try again." << endl;
+                    break;
+            }
+            break;
+        } case 3: {
+            cout << "Please enter a function type:" << endl;
+            cout << "1. Power integral" << endl;
+            cout << "2. Exponential integral" << endl;
+            cout << "3. Cosine integral" << endl;
+            cout << "4. Sine integral" << endl;
+            cout << "5. Tangent integral" << endl;
+            int integralType;
+            cin >> integralType;
+            switch (integralType) {
+                case 1: {
+                    cout << "Please enter a function for power integral in the form int(a,b)kx^n:" << endl;
+                    string PowerInput;
+                    cin.ignore();
+                    getline(cin, PowerInput);
+                size_t Int = PowerInput.find("int(");
+                size_t Comma = PowerInput.find(",");
+                size_t CloseInt = PowerInput.find(")");
+                size_t X = PowerInput.find("x^");
+                if (Int != string::npos && Comma != string::npos && CloseInt != string::npos && X != string::npos) {
+                    double a = findPi(PowerInput.substr(Int + 4, Comma - Int - 4));
+                    double b = findPi(PowerInput.substr(Comma + 1, CloseInt - Comma - 1));
+                    double k = findPi(PowerInput.substr(CloseInt + 1, X - CloseInt - 1));
+                    double n = findPi(PowerInput.substr(X + 2));
+                    PowerIntegral p(a, b, k, n);
+                    cout << "You entered: f(x) = ";
+                    p.display();
+                    cout << "Result of int(" << p.getA() << "," << p.getB() << ") " << k << " * x^" << n << " = " << p.calculate() << endl;
+                } else {
+                    cout << "Invalid power integral format." << endl;
+                }
+                break;
+            } case 2: {
+                cout << "Please enter a function for exponential integral in the form int(a,b)k1e^k2x:" << endl;
+                string ExponentialInput;
+                cin.ignore();
+                getline(cin, ExponentialInput);
+                size_t Int = ExponentialInput.find("int(");
+                size_t Comma = ExponentialInput.find(",");
+                size_t CloseInt = ExponentialInput.find(")");
+                size_t E = ExponentialInput.find("e^");
+                size_t X = ExponentialInput.find("x");
+                if (Int != string::npos && Comma != string::npos && CloseInt != string::npos && E != string::npos && X != string::npos) {
+                    double a = findPi(ExponentialInput.substr(Int + 4, Comma - Int - 4));
+                    double b = findPi(ExponentialInput.substr(Comma + 1, CloseInt - Comma - 1));
+                    double k1 = findPi(ExponentialInput.substr(CloseInt + 1, E - CloseInt - 1));
+                    double k2 = findPi(ExponentialInput.substr(E + 2, X - E - 2));
+                    ExponentialIntegral i(a, b, k1, k2);
+                    cout << "You entered: f(x) = ";
+                    i.display();
+                    cout << "Result for int(" << i.getA() << "," << i.getB() << ") " << k1 << " * e^(" << k2 << "x) = " << i.calculate() << endl;
+                } else {
+                    cout << "Invalid exponential integral format." << endl;
+                }
+                break;
+            } case 3: {
+                cout << "Please enter a function for cosine integral in the form int(a,b)k1cos(k2x):" << endl;
+                string CosineInput;
+                cin.ignore();
+                getline(cin, CosineInput);
+                size_t Int = CosineInput.find("int(");
+                size_t Comma = CosineInput.find(",");
+                size_t CloseInt = CosineInput.find(")");
+                size_t Cos = CosineInput.find("cos(");
+                size_t X = CosineInput.find("x");
+                if (Cos != string::npos && X != string::npos && Comma != string::npos && Int != string::npos && CloseInt != string::npos) {
+                        double a = findPi(CosineInput.substr(Int + 4, Comma - Int - 4));
+                        double b = findPi(CosineInput.substr(Comma + 1, CloseInt - Comma - 1));
+                        double k1 = findPi(CosineInput.substr(CloseInt + 1,Cos - (CloseInt + 1)));
+                        double k2 = findPi(CosineInput.substr(Cos + 4,X - (Cos + 4)));
+                        CosineIntegral c(a, b, k1, k2);
+                        cout << "You entered: f(x) = ";
+                        c.display();
+                        cout << "Result for int(" << c.getA() << "," << c.getB() << ") " << k1 << " * cos(" << k2 << "x) = " << c.calculate() << endl;
+                    } else {
+                        cout << "Invalid cosine integral format." << endl;
+                    }
+                break;
+            } case 4: {
+                cout << "Please enter a function for sine integral in the form int(a,b)k1sin(k2x):" << endl;
+                string SineInput;
+                cin.ignore();
+                getline(cin, SineInput);
+                size_t Int = SineInput.find("int(");
+                size_t Comma = SineInput.find(",");
+                size_t CloseInt = SineInput.find(")");
+                size_t Sin = SineInput.find("sin(");
+                size_t X = SineInput.find("x");
+                if (Int != string::npos && Comma != string::npos && CloseInt != string::npos && Sin != string::npos && X != string::npos) {
+                    double a = findPi(SineInput.substr(Int + 4, Comma - Int - 4));
+                    double b = findPi(SineInput.substr(Comma + 1, CloseInt - Comma - 1));
+                    double k1 = findPi(SineInput.substr(CloseInt + 1, Sin - CloseInt - 1));
+                    double k2 = findPi(SineInput.substr(Sin + 4, X - Sin - 4));
+                    SinusIntegral s(a, b, k1, k2);
+                    cout << "You entered: f(x) = ";
+                    s.display();
+                    cout << "Result for int(" << s.getA() << "," << s.getB() << ") " << k1 << " * sin(" << k2 << "x) = " << s.calculate() << endl;
+                } else {
+                    cout << "Invalid sine integral format." << endl;
+                }
+                break;
+            } case 5: {
+                cout << "Please enter a function for tangent integral in the form int(a,b)k1tan(k2x):" << endl;
+                string TangentInput;
+                cin.ignore();
+                getline(cin, TangentInput);
+                size_t Int = TangentInput.find("int(");
+                size_t Comma = TangentInput.find(",");
+                size_t CloseInt = TangentInput.find(")");
+                size_t Tan = TangentInput.find("tan(");
+                size_t X = TangentInput.find("x");
+                if (Int != string::npos && Comma != string::npos && CloseInt != string::npos && Tan != string::npos && X != string::npos) {
+                    double a = findPi(TangentInput.substr(Int + 4, Comma - Int - 4));
+                    double b = findPi(TangentInput.substr(Comma + 1, CloseInt - Comma - 1));
+                    double k1 = findPi(TangentInput.substr(CloseInt + 1, Tan - CloseInt - 1));
+                    double k2 = findPi(TangentInput.substr(Tan + 4, X - Tan - 4));
+                    TanIntegral t(a, b, k1, k2);
+                    cout << "You entered: f(x) = ";
+                    t.display();
+                    cout << "Result for int(" << t.getA() << "," << t.getB() << ") " << k1 << " * tan(" << k2 << "x) = " << t.calculate() << endl;
+                } else {
+                    cout << "Invalid tangent integral format." << endl;
+                }
+                break;
+            } default: {
+                    cout << "Invalid integral type. Please try again." << endl;
+                }
+                break;
+            }
+            break;
+        } case 4: {
+            cout << "Exiting the Calculator. Goodbye!" << endl;
+            break;
+         }}
+        } while (choice != 4);
+    return 0;
+    }
